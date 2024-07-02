@@ -1,0 +1,31 @@
+# @format
+
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    command:
+      - --log.level=DEBUG
+      - --global.checkNewVersion=true # added from smarthomebeginner
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls=true
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.cloudflare.acme.email=$CF_API_EMAIL
+      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    environment:
+      - CF_API_EMAIL=$CF_API_EMAIL
+      - CF_API_KEY=$CF_API_KEY
+    volumes:
+      - ./letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+networks: {}

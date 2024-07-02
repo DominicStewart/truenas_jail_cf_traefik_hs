@@ -1,0 +1,57 @@
+# @format
+
+volumes:
+  mysql_data: null
+  romm_resources: null
+  romm_redis_data: null
+services:
+  romm:
+    image: rommapp/romm:latest
+    container_name: romm
+    restart: unless-stopped
+    environment:
+      - DB_HOST=romm-db
+      - DB_NAME=$MYSQL_DATABASE
+      - DB_USER=$MYSQL_USER
+      - DB_PASSWD=$MYSQL_PASSWORD
+      - IGDB_CLIENT_ID=$IGDB_CLIENT_ID
+      - IGDB_CLIENT_SECRET=$IGDB_CLIENT_SECRET
+      - MOBYGAMES_API_KEY=$MOBYGAMES_API_KEY
+      - ROMM_AUTH_SECRET_KEY=$ROMM_AUTH_SECRET_KEY
+      - ROMM_AUTH_USERNAME=$ROMM_AUTH_USERNAME
+      - ROMM_AUTH_PASSWORD=$ROMM_AUTH_PASSWORD
+    networks:
+      - traefik_default
+    volumes:
+      - romm_resources:/romm/resources
+      - romm_redis_data:/redis-data
+      - /mnt/roms/romm:/romm/library
+      - /mnt/romm/assets:/romm/assets
+      - /mnt/romm/config:/romm/config
+    ports:
+      - 82:8080
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.romm.tls=true
+      - traefik.http.routers.romm.rule=Host(`$host`)
+      - traefik.http.routers.romm.entrypoints=websecure
+      - traefik.http.routers.romm.tls.certresolver=cloudflare
+      - traefik.http.services.romm.loadbalancer.server.port=8080
+    depends_on:
+      - romm-db
+  romm-db:
+    image: mariadb:latest
+    container_name: romm-db
+    restart: unless-stopped
+    networks:
+      - traefik_default
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD # Use a unique, secure password
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+      - MYSQL_USER=$MYSQL_USER
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD
+    volumes:
+      - mysql_data:/var/lib/mysql
+networks:
+  traefik_default:
+    external: true

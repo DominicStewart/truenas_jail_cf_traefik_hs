@@ -1,0 +1,25 @@
+# @format
+
+services:
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    ports:
+      - 8191:8191
+    environment:
+      - LOG_LEVEL=info
+      - TZ=Asia/Tokyo
+      - TEST_URL=https://www.google.com
+    restart: unless-stopped
+    networks:
+      - traefik_default
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.flaresolverr.tls=true
+      - traefik.http.routers.flaresolverr.rule=Host(`$host`)
+      - traefik.http.routers.flaresolverr.entrypoints=websecure
+      - traefik.http.routers.flaresolverr.tls.certresolver=cloudflare
+      - traefik.http.services.flaresolverr.loadbalancer.server.port=8191
+networks:
+  traefik_default:
+    external: true

@@ -1,0 +1,29 @@
+# @format
+
+services:
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=3000
+      - PGID=568
+      - TZ=Asia/Tokyo
+    volumes:
+      - /mnt/radarr/config:/config
+      - /mnt/plex:/library
+      - /mnt/qbittorrent/files:/torrents
+    networks:
+      - traefik_default
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.radarr.tls=true
+      - traefik.http.routers.radarr.rule=Host(`$host`)
+      - traefik.http.routers.radarr.entrypoints=websecure
+      - traefik.http.routers.radarr.tls.certresolver=cloudflare
+      - traefik.http.services.radarr.loadbalancer.server.port=7878
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+networks:
+  traefik_default:
+    external: true

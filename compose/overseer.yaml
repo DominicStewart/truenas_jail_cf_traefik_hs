@@ -1,0 +1,27 @@
+# @format
+
+services:
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=3000
+      - PGID=568
+      - TZ=Asia/Tokyo
+    volumes:
+      - /mnt/overseer/config:/config
+    ports:
+      - 5055:5055
+    networks:
+      - traefik_default
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.overseerr.tls=true
+      - traefik.http.routers.overseerr.rule=Host(`$host`)
+      - traefik.http.routers.overseerr.entrypoints=websecure
+      - traefik.http.routers.overseerr.tls.certresolver=cloudflare
+      - traefik.http.services.overseerr.loadbalancer.server.port=5055
+    restart: unless-stopped
+networks:
+  traefik_default:
+    external: true

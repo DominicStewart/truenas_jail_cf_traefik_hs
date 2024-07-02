@@ -1,0 +1,29 @@
+# @format
+
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=3000
+      - PGID=568
+      - TZ=Asia/Tokyo
+    volumes:
+      - /mnt/prowlarr/config:/config
+      - /mnt/plex:/library
+      - /mnt/qbittorrent/files:/torrents
+    ports:
+      - 9696:9696
+    networks:
+      - traefik_default
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prowlarr.tls=true
+      - traefik.http.routers.prowlarr.rule=Host(`$host`)
+      - traefik.http.routers.prowlarr.entrypoints=websecure
+      - traefik.http.routers.prowlarr.tls.certresolver=cloudflare
+      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
+networks:
+  traefik_default:
+    external: true

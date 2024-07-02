@@ -1,0 +1,32 @@
+# @format
+
+services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=3000
+      - PGID=568
+      - TZ=Asia/Tokyo
+      - WEBUI_PORT=10095
+      - TORRENTING_PORT=6881
+    volumes:
+      - /mnt/qbittorrent/config:/config
+      - /mnt/qbittorrent/files:/torrents
+    ports:
+      - 10095:10095
+      - 6881:6881
+      - 6881:6881/udp
+    networks:
+      - traefik_default
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.qbittorrent.tls=true
+      - traefik.http.routers.qbittorrent.rule=Host(`$host`)
+      - traefik.http.routers.qbittorrent.entrypoints=websecure
+      - traefik.http.routers.qbittorrent.tls.certresolver=cloudflare
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=10095
+    restart: unless-stopped
+networks:
+  traefik_default:
+    external: true
