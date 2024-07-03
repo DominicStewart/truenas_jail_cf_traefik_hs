@@ -21,7 +21,7 @@ services:
       - ROMM_AUTH_USERNAME=$ROMM_AUTH_USERNAME
       - ROMM_AUTH_PASSWORD=$ROMM_AUTH_PASSWORD
     networks:
-      - traefik_default
+      - dockge_default
     volumes:
       - romm_resources:/romm/resources
       - romm_redis_data:/redis-data
@@ -32,11 +32,11 @@ services:
       - 82:8080
     labels:
       - traefik.enable=true
-      - traefik.http.routers.romm.tls=true
-      - traefik.http.routers.romm.rule=Host(`$host`)
-      - traefik.http.routers.romm.entrypoints=websecure
-      - traefik.http.routers.romm.tls.certresolver=cloudflare
-      - traefik.http.services.romm.loadbalancer.server.port=8080
+      - traefik.http.routers.romm-rtr.rule=Host(`$host`)
+      - traefik.http.routers.romm-rtr.entrypoints=websecure
+      - traefik.http.routers.romm-rtr.middlewares=chain-no-auth@file
+      - traefik.http.routers.romm-rtr.service=romm-svc
+      - traefik.http.services.romm-svc.loadbalancer.server.port=8080
     depends_on:
       - romm-db
   romm-db:
@@ -44,7 +44,7 @@ services:
     container_name: romm-db
     restart: unless-stopped
     networks:
-      - traefik_default
+      - dockge_default
     environment:
       - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD # Use a unique, secure password
       - MYSQL_DATABASE=$MYSQL_DATABASE
@@ -53,5 +53,5 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 networks:
-  traefik_default:
+  dockge_default:
     external: true

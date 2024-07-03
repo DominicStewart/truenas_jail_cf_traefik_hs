@@ -13,17 +13,17 @@ services:
       - /mnt/plex:/library
       - /mnt/qbittorrent/files:/torrents
     networks:
-      - traefik_default
+      - dockge_default
     labels:
       - traefik.enable=true
-      - traefik.http.routers.radarr.tls=true
-      - traefik.http.routers.radarr.rule=Host(`$host`)
-      - traefik.http.routers.radarr.entrypoints=websecure
-      - traefik.http.routers.radarr.tls.certresolver=cloudflare
-      - traefik.http.services.radarr.loadbalancer.server.port=7878
+      - traefik.http.routers.radarr-rtr.rule=Host(`$host`)
+      - traefik.http.routers.radarr-rtr.entrypoints=websecure
+      - traefik.http.routers.radarr-rtr.middlewares=chain-no-auth@file
+      - traefik.http.routers.radarr-rtr.service=radarr-svc
+      - traefik.http.services.radarr-svc.loadbalancer.server.port=7878
     ports:
       - 7878:7878
     restart: unless-stopped
 networks:
-  traefik_default:
+  dockge_default:
     external: true

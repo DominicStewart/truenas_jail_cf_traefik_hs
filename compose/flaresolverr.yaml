@@ -12,14 +12,14 @@ services:
       - TEST_URL=https://www.google.com
     restart: unless-stopped
     networks:
-      - traefik_default
+      - dockge_default
     labels:
       - traefik.enable=true
-      - traefik.http.routers.flaresolverr.tls=true
-      - traefik.http.routers.flaresolverr.rule=Host(`$host`)
-      - traefik.http.routers.flaresolverr.entrypoints=websecure
-      - traefik.http.routers.flaresolverr.tls.certresolver=cloudflare
-      - traefik.http.services.flaresolverr.loadbalancer.server.port=8191
+      - traefik.http.routers.flaresolverr-rtr.rule=Host(`$host`)
+      - traefik.http.routers.flaresolverr-rtr.entrypoints=websecure
+      - traefik.http.routers.flaresolverr-rtr.middlewares=chain-no-auth@file
+      - traefik.http.services.flaresolverr-svc.loadbalancer.server.port=8191
+      - traefik.http.routers.flaresolverr-rtr.service=flaresolverr-svc
 networks:
-  traefik_default:
+  dockge_default:
     external: true

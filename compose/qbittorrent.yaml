@@ -18,15 +18,15 @@ services:
       - 6881:6881
       - 6881:6881/udp
     networks:
-      - traefik_default
+      - dockge_default
     labels:
       - traefik.enable=true
-      - traefik.http.routers.qbittorrent.tls=true
-      - traefik.http.routers.qbittorrent.rule=Host(`$host`)
-      - traefik.http.routers.qbittorrent.entrypoints=websecure
-      - traefik.http.routers.qbittorrent.tls.certresolver=cloudflare
-      - traefik.http.services.qbittorrent.loadbalancer.server.port=10095
+      - traefik.http.routers.qbittorrent-rtr.rule=Host(`$host`)
+      - traefik.http.routers.qbittorrent-rtr.entrypoints=websecure
+      - traefik.http.routers.qbittorrent-rtr.middlewares=chain-no-auth@file
+      - traefik.http.routers.qbittorrent-rtr.service=qbittorrent-svc
+      - traefik.http.services.qbittorrent-svc.loadbalancer.server.port=10095
     restart: unless-stopped
 networks:
-  traefik_default:
+  dockge_default:
     external: true
