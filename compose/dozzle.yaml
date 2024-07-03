@@ -10,7 +10,7 @@ services:
     ports:
       - 9999:8080
     networks:
-      - dockge_default
+      - docker_network
     labels:
       - traefik.enable=true
       - traefik.http.routers.dozzle-rtr.rule=Host(`$host`)
@@ -19,5 +19,5 @@ services:
       - traefik.http.routers.dozzle-rtr.service=dozzle-svc
       - traefik.http.services.dozzle-svc.loadbalancer.server.port=8080
 networks:
-  dockge_default:
+  docker_network:
     external: true

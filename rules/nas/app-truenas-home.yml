@@ -1,0 +1,19 @@
+# @format
+
+http:
+  routers:
+    truenas-rtr:
+      rule: "Host(`insert_host_here`)"
+      entryPoints:
+        - websecure
+      middlewares:
+        - chain-no-auth
+      service: truenas-svc
+      tls:
+        certResolver: cloudflare
+        options: tls-opts@file
+  services:
+    truenas-svc:
+      loadBalancer:
+        servers:
+          - url: "http://0.0.0.0:81" # TrueNAS IP and port. Replace 0.0.0.0 with your truenas internal IP

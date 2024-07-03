@@ -21,7 +21,7 @@ services:
       - ROMM_AUTH_USERNAME=$ROMM_AUTH_USERNAME
       - ROMM_AUTH_PASSWORD=$ROMM_AUTH_PASSWORD
     networks:
-      - dockge_default
+      - docker_network
     volumes:
       - romm_resources:/romm/resources
       - romm_redis_data:/redis-data
@@ -44,7 +44,7 @@ services:
     container_name: romm-db
     restart: unless-stopped
     networks:
-      - dockge_default
+      - docker_network
     environment:
       - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD # Use a unique, secure password
       - MYSQL_DATABASE=$MYSQL_DATABASE
@@ -53,5 +53,5 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 networks:
-  dockge_default:
+  docker_network:
     external: true

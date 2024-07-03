@@ -2,11 +2,12 @@
 
 # I have updated the charts. I haven't updated the below guide yet. Basic changes are:
 
-1. Now using the Dockge default network, not the Traefik default network. I may change this to make an entirely separate network in the future.
-2. Added middleware based on smarthomebeginner guides. Adjusted based on Dockge usage.
-3. To support middleware, smarthomebeginner guides suggests setting up a rules directory. So I mounted a directory, created folders and files based on the guide here: https://www.smarthomebeginner.com/traefik-v3-docker-compose-guide-2024/ . Dont need to follow the whole guide. But you do need to follow the guide to setup acme.json, the permissions (chmod 600) and the rules folder.
-4. I'm not including the rules i've setup. But they're the same as the guide from: https://www.smarthomebeginner.com/traefik-v3-docker-compose-guide-2024/. Look towards the end of the guide and follow which files to add to the rules folder, and what content to put in the files.
-5. Added google oAuth. Follow this guide to setup google correctly: https://www.smarthomebeginner.com/google-oauth-traefik-forward-auth-2024/. This should get you your client ID and secret. Put the ids/secret/oauth secret in the .env section of Dockge.
+1. I made a new docker network called "docker_network". I did this in the Docker shell (SSH in to truenas. jlmkr shell docker, and then do docker network create docker_network)
+2. All compose files are now using this network, not the Traefik default network. This is to avoid startup dependencies. I'm not sure, but I have a hunch if dockge or traefik started up later, their default networks would not be available.
+3. Added middleware based on smarthomebeginner guides. Adjusted based on Dockge usage.
+4. To support middleware, smarthomebeginner guides suggests setting up a rules directory. So I mounted a directory, created folders and files based on the guide here: https://www.smarthomebeginner.com/traefik-v3-docker-compose-guide-2024/ . Dont need to follow the whole guide. But you do need to follow the guide to setup acme.json, the permissions (chmod 600) and the rules folder.
+5. I've included the rules folder. Traefik needs to be able to access this as a volume. But they're the same as the guide from: https://www.smarthomebeginner.com/traefik-v3-docker-compose-guide-2024/. Look towards the end of the guide and follow which files to add to the rules folder, and what content to put in the files.
+6. Added google oAuth. Follow this guide to setup google correctly: https://www.smarthomebeginner.com/google-oauth-traefik-forward-auth-2024/. This should get you your client ID and secret. Put the ids/secret/oauth secret in the .env section of Dockge.
 
 # TrueNAS Scale Docker Compose Setup with Jailmaker and Cloudflare Tunnels
 

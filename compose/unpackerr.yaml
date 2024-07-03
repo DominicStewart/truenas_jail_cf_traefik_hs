@@ -10,7 +10,7 @@ services:
     restart: always
     user: 3000:568
     networks:
-      - dockge_default
+      - docker_network
     # Remove apps and feature configs you do not use or need.
     # ie. Remove all lines that begin with UN_CMDHOOK, UN_WEBHOOK, UN_FOLDER, UN_WEBSERVER, and other apps you do not use.
     environment:
@@ -55,5 +55,5 @@ services:
     ports:
       - 5656:5656
 networks:
-  dockge_default:
+  docker_network:
     external: true

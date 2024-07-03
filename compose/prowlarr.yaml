@@ -15,7 +15,7 @@ services:
     ports:
       - 9696:9696
     networks:
-      - dockge_default
+      - docker_network
     restart: unless-stopped
     labels:
       - traefik.enable=true
@@ -25,5 +25,5 @@ services:
       - traefik.http.routers.prowlarr-rtr.service=prowlarr-svc
       - traefik.http.services.prowlarr-svc.loadbalancer.server.port=9696
 networks:
-  dockge_default:
+  docker_network:
     external: true

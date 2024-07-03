@@ -20,7 +20,7 @@ services:
       - /mnt/plex/transcode:/transcode
       - /mnt/plex/library_files:/library
     networks:
-      - dockge_default
+      - docker_network
     environment:
       - PUID=3000
       - PGID=568
@@ -37,5 +37,5 @@ services:
       - traefik.http.services.plex-svc.loadbalancer.server.port=32400
     restart: unless-stopped
 networks:
-  dockge_default:
+  docker_network:
     external: true

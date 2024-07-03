@@ -13,7 +13,7 @@ services:
       - /mnt/plex:/library
       - /mnt/qbittorrent/files:/torrents
     networks:
-      - dockge_default
+      - docker_network
     labels:
       - traefik.enable=true
       - traefik.http.routers.radarr-rtr.rule=Host(`$host`)
@@ -25,5 +25,5 @@ services:
       - 7878:7878
     restart: unless-stopped
 networks:
-  dockge_default:
+  docker_network:
     external: true

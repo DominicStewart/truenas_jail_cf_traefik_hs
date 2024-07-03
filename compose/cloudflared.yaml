@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     command: tunnel --no-autoupdate run --token $token
     networks:
-      - dockge_default
+      - docker_network
 networks:
-  dockge_default:
+  docker_network:
     external: true

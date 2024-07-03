@@ -13,7 +13,7 @@ services:
     ports:
       - 5055:5055
     networks:
-      - dockge_default
+      - docker_network
     labels:
       - traefik.enable=true
       - traefik.http.routers.overseerr-rtr.rule=Host(`$host`)
@@ -23,5 +23,5 @@ services:
       - traefik.http.services.overseerr-svc.loadbalancer.server.port=5055
     restart: unless-stopped
 networks:
-  dockge_default:
+  docker_network:
     external: true

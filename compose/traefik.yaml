@@ -53,7 +53,7 @@ services:
       - traefik.http.routers.traefik-rtr.service=api@internal
       - traefik.http.routers.traefik-rtr.middlewares=chain-oauth@file
     networks:
-      - dockge_default
+      - docker_network
 networks:
-  dockge_default:
+  docker_network:
     external: true

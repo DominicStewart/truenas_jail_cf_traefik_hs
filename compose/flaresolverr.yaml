@@ -12,7 +12,7 @@ services:
       - TEST_URL=https://www.google.com
     restart: unless-stopped
     networks:
-      - dockge_default
+      - docker_network
     labels:
       - traefik.enable=true
       - traefik.http.routers.flaresolverr-rtr.rule=Host(`$host`)
@@ -21,5 +21,5 @@ services:
       - traefik.http.services.flaresolverr-svc.loadbalancer.server.port=8191
       - traefik.http.routers.flaresolverr-rtr.service=flaresolverr-svc
 networks:
-  dockge_default:
+  docker_network:
     external: true
