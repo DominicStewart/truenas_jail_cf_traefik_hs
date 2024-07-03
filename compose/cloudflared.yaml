@@ -1,14 +1,12 @@
 # @format
 
-version: "3.3"
 services:
   cloudflared:
     image: cloudflare/cloudflared:latest
     restart: unless-stopped
     command: tunnel --no-autoupdate run --token $token
-
     networks:
-      - traefik_default
+      - docker_network
 networks:
-  traefik_default:
+  docker_network:
     external: true

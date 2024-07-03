@@ -10,22 +10,50 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.tls=true
-      - --api.insecure=true
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      - --entrypoints.websecure.http.tls.options=tls-opts@file # Added this 3rd July
+      - --entrypoints.websecure.http.tls.certresolver=cloudflare # Added this 3rd July
+      - --entrypoints.websecure.http.tls.domains[0].main=$DOMAINNAME_1 # Added this 3rd July
+      - --entrypoints.websecure.http.tls.domains[0].sans=*.$DOMAINNAME_1 # Added this 3rd July
+      - --api.dashboard=true # Added this 3rd July
+      - --api=true # Added this 3rd July
+      - --entrypoints.websecure.forwardedHeaders.trustedIPs=$CLOUDFLARE_IPS,$LOCAL_IPS # Added this 3rd July
+      - --providers.docker.endpoint=unix:///var/run/docker.sock # Added this 3rd July.
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
+      - --providers.file.directory=/rules # Added this 3rd July
+      - --providers.file.watch=true # Added this 3rd July
       - --certificatesresolvers.cloudflare.acme.dnschallenge=true
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.cloudflare.acme.email=$CF_API_EMAIL
-      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.cloudflare.acme.storage=/acme.json # Added this 3rd July.
+      - --certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53 # Added this 3rd July.
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
+      #- 8080:8080 # commented out 3rd July
     environment:
+      - PUID=3000
+      - PGID=568
       - CF_API_EMAIL=$CF_API_EMAIL
       - CF_API_KEY=$CF_API_KEY
     volumes:
-      - ./letsencrypt:/letsencrypt
+      - $DOCKERDIR/traefik/rules/nas:/rules # Added this 3rd July.
+      - $DOCKERDIR/traefik/acme/acme.json:/acme.json # Added this 3rd July.
+      - $DOCKERDIR/logs/nas/traefik:/logs # Added this 3rd July.
+      - ./letsencrypt:/letsencrypt # Not being used as of 3rd July. Keeping for now
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
-networks: {}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik-rtr.rule=Host(`$host`)
+      - traefik.http.routers.traefik-rtr.entrypoints=websecure
+      - traefik.http.routers.traefik-rtr.service=api@internal
+      - traefik.http.routers.traefik-rtr.middlewares=chain-oauth@file
+    networks:
+      - docker_network
+networks:
+  docker_network:
+    external: true

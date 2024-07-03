@@ -13,15 +13,15 @@ services:
     ports:
       - 5055:5055
     networks:
-      - traefik_default
+      - docker_network
     labels:
       - traefik.enable=true
-      - traefik.http.routers.overseerr.tls=true
-      - traefik.http.routers.overseerr.rule=Host(`$host`)
-      - traefik.http.routers.overseerr.entrypoints=websecure
-      - traefik.http.routers.overseerr.tls.certresolver=cloudflare
-      - traefik.http.services.overseerr.loadbalancer.server.port=5055
+      - traefik.http.routers.overseerr-rtr.rule=Host(`$host`)
+      - traefik.http.routers.overseerr-rtr.entrypoints=websecure
+      - traefik.http.routers.overseerr-rtr.middlewares=chain-no-auth@file
+      - traefik.http.routers.overseerr-rtr.service=overseerr-svc
+      - traefik.http.services.overseerr-svc.loadbalancer.server.port=5055
     restart: unless-stopped
 networks:
-  traefik_default:
+  docker_network:
     external: true

@@ -1,0 +1,40 @@
+# @format
+
+services:
+  oauth:
+    container_name: oauth
+    image: thomseddon/traefik-forward-auth:latest
+    restart: unless-stopped
+    environment:
+      - PROVIDERS_GOOGLE_CLIENT_ID=$clientid
+      - PROVIDERS_GOOGLE_CLIENT_SECRET=$clientsecret
+      - SECRET=$oauthsecret
+      - PUID=3000
+      - PGID=568
+      - CONFIG=/config
+      - COOKIE_DOMAIN=$DOMAINNAME
+      - INSECURE_COOKIE=false
+      - AUTH_HOST=oauth.$DOMAINNAME
+      - URL_PATH=/_oauth
+      - LOG_LEVEL=trace # set to trace while testing bypass rules
+      - LOG_FORMAT=text
+      - LIFETIME=86400 # 1 day
+      - DEFAULT_ACTION=auth
+      - DEFAULT_PROVIDER=google
+      - whitelist=$email1
+      - whitelist=$email2
+    volumes:
+      - $DOCKERDIR/oauth/config:/config # Added this 3rd July.
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.oauth-rtr.tls=true
+      - traefik.http.routers.oauth-rtr.entrypoints=websecure
+      - traefik.http.routers.oauth-rtr.rule=Host(`$host`)
+      - traefik.http.routers.oauth-rtr.middlewares=chain-oauth@file
+      - traefik.http.routers.oauth-rtr.service=oauth-svc
+      - traefik.http.services.oauth-svc.loadbalancer.server.port=4181
+    networks:
+      - docker_network
+networks:
+  docker_network:
+    external: true

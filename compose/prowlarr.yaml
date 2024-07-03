@@ -15,15 +15,15 @@ services:
     ports:
       - 9696:9696
     networks:
-      - traefik_default
+      - docker_network
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.prowlarr.tls=true
-      - traefik.http.routers.prowlarr.rule=Host(`$host`)
-      - traefik.http.routers.prowlarr.entrypoints=websecure
-      - traefik.http.routers.prowlarr.tls.certresolver=cloudflare
-      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
+      - traefik.http.routers.prowlarr-rtr.rule=Host(`$host`)
+      - traefik.http.routers.prowlarr-rtr.entrypoints=websecure
+      - traefik.http.routers.prowlarr-rtr.middlewares=chain-no-auth@file
+      - traefik.http.routers.prowlarr-rtr.service=prowlarr-svc
+      - traefik.http.services.prowlarr-svc.loadbalancer.server.port=9696
 networks:
-  traefik_default:
+  docker_network:
     external: true

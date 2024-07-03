@@ -15,15 +15,15 @@ services:
     ports:
       - 8989:8989
     networks:
-      - traefik_default
+      - docker_network
     labels:
       - traefik.enable=true
-      - traefik.http.routers.sonarr.tls=true
-      - traefik.http.routers.sonarr.rule=Host(`$host`)
-      - traefik.http.routers.sonarr.entrypoints=websecure
-      - traefik.http.routers.sonarr.tls.certresolver=cloudflare
-      - traefik.http.services.sonarr.loadbalancer.server.port=8989
+      - traefik.http.routers.sonarr-rtr.rule=Host(`$host`)
+      - traefik.http.routers.sonarr-rtr.entrypoints=websecure
+      - traefik.http.routers.sonarr-rtr.middlewares=chain-no-auth@file
+      - traefik.http.routers.sonarr-rtr.service=sonarr-svc
+      - traefik.http.services.sonarr-svc.loadbalancer.server.port=8989
     restart: unless-stopped
 networks:
-  traefik_default:
+  docker_network:
     external: true
