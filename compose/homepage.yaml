@@ -1,0 +1,20 @@
+# @format
+
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    environment:
+      PUID: 3000
+      PGID: 568
+    ports:
+      - 3000:3000
+    volumes:
+      - /mnt/homepage/config:/app/config # Make sure your local config directory exists
+      - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+    restart: unless-stopped
+    networks:
+      - docker_network
+networks:
+  docker_network:
+    external: true

@@ -26,6 +26,9 @@ services:
       - PGID=568
       - TZ=Asia/Tokyo
       - PLEX_CLAIM=$PLEX_CLAIM
+      - ADVERTISE_IP=${PLEX_ADVERTISE_IP} # This is a list of IPs that will be advertised to Plex.
+      #Used for when your local devices / remote devices connect. It should include your domain
+      # Such as https://plex.yourdomain.com:32400, https://plex.yourdomain.com:80, https://plex.yourdomain.com:443, http://localiphere:32400
     devices:
       - /dev/dri:/dev/dri
     labels:
