@@ -1,0 +1,38 @@
+# @format
+
+version: "3.8"
+services:
+  dockge:
+    image: louislam/dockge:1
+    restart: unless-stopped
+    ports:
+      - 5001:5001
+    volumes:
+      #- /var/run/docker.sock:/var/run/docker.sock
+      - ./data:/app/data
+      - /mnt/dockge_shared_data:/mnt/dockge_shared_data
+      - /opt/docker_files/secrets:/mnt/docker_files
+      # Stacks Directory
+      # ⚠️ READ IT CAREFULLY. If you did it wrong, your data could end up writin>
+      # ⚠️ 1. FULL path only. No relative path (MUST)
+      # ⚠️ 2. Left Stacks Path === Right Stacks Path (MUST)
+      - /opt/stacks:/opt/stacks
+    environment:
+      # Tell Dockge where to find the stacks
+      - DOCKGE_STACKS_DIR=/opt/stacks
+      - DOCKER_HOST=tcp://socket-proxy:2375
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dockge-rtr.rule=Host(`dockge.yourdomainhere.com`)
+      - traefik.http.routers.dockge-rtr.entrypoints=websecure
+      - traefik.http.routers.dockge-rtr.middlewares=chain-oauth@file
+      - traefik.http.routers.dockge-rtr.service=dockge-svc
+      - traefik.http.services.dockge-svc.loadbalancer.server.port=5001
+    networks:
+      - docker_network
+      - socket_proxy
+networks:
+  docker_network:
+    external: true
+  socket_proxy:
+    external: true
