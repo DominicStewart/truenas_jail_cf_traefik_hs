@@ -8,6 +8,7 @@ July 5th
 4. I've made a new socket_proxy network. Again, from the docker jail. You can do something like "docker network create   --driver=bridge   --subnet=192.168.91.0/24   socket_proxy" to create the network with the appropriate subnet.
 5. I've moved whoami to the traefik compose file, as its a traefik image. IMO it makes sense to have it in the yaml file. But I may be wrong...
 6. I can't get homepage to work non-root. So I've had to keep the homepage files as root only. Making sure the config dataset is also set to root/root in truenas.
+7. I've also updated the plex yaml file to correctly broadcast the IPs and domains. I was having issues with Plex dropping the connection sometimes. It was because I was only broadcasting plex.mydomain.com, meaning even locally I was streaming all the files over the cloudflare proxy. I've added the local ip, with the port to the broad IPs so that my local devices will connect locally, and remote devices will go over Cloudflare.
 
 July 4th
 1. I made a new docker network called "docker_network". I did this in the Docker shell (SSH in to truenas. jlmkr shell docker, and then do docker network create docker_network)
