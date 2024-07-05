@@ -5,16 +5,25 @@ services:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
     environment:
-      PUID: 3000
-      PGID: 568
-    ports:
-      - 3000:3000
+      DOCKER_HOST: tcp://socket-proxy:2375
     volumes:
       - /mnt/homepage/config:/app/config # Make sure your local config directory exists
-      - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+      #- /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 3000:3000
     restart: unless-stopped
     networks:
       - docker_network
+      - socket_proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homepage-rtr.rule=Host(`$host`) || Host(`www.$host`)
+      - traefik.http.routers.homepage-rtr.entrypoints=websecure
+      - traefik.http.routers.homepage-rtr.middlewares=chain-oauth@file
+      - traefik.http.routers.homepage-rtr.service=homepage-svc
+      - traefik.http.services.homepage-svc.loadbalancer.server.port=3000
 networks:
   docker_network:
+    external: true
+  socket_proxy:
     external: true

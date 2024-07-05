@@ -1,0 +1,18 @@
+# @format
+
+services:
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    restart: unless-stopped
+    environment:
+      - TZ=$TZ
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+      - WATCHTOWER_SCHEDULE=0 30 12 * * *
+      - DOCKER_HOST=tcp://socket-proxy:2375
+    networks:
+      - socket_proxy
+networks:
+  socket_proxy:
+    external: true

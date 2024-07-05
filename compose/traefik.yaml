@@ -20,7 +20,8 @@ services:
       - --api.dashboard=true # Added this 3rd July
       - --api=true # Added this 3rd July
       - --entrypoints.websecure.forwardedHeaders.trustedIPs=$CLOUDFLARE_IPS,$LOCAL_IPS # Added this 3rd July
-      - --providers.docker.endpoint=unix:///var/run/docker.sock # Added this 3rd July.
+      - --providers.docker.endpoint=tcp://socket-proxy:2375 # Added 5th July. Now using socket proxy.
+      - --providers.docker.network=docker_network # Added 5th July. I think its necessary to include this to specify what network to use.
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --providers.file.directory=/rules # Added this 3rd July
@@ -44,7 +45,7 @@ services:
       - $DOCKERDIR/traefik/acme/acme.json:/acme.json # Added this 3rd July.
       - $DOCKERDIR/logs/nas/traefik:/logs # Added this 3rd July.
       - ./letsencrypt:/letsencrypt # Not being used as of 3rd July. Keeping for now
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      #- /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
     labels:
       - traefik.enable=true
@@ -54,6 +55,27 @@ services:
       - traefik.http.routers.traefik-rtr.middlewares=chain-oauth@file
     networks:
       - docker_network
+      - socket_proxy
+  whoami:
+    image: traefik/whoami
+    restart: unless-stopped
+    environment:
+      - PUID=3000
+      - PGID=568
+    networks:
+      - docker_network
+    command:
+      - --port=2001
+      - --name=nas
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoami-rtr.rule=Host(`$host2`)
+      - traefik.http.routers.whoami-rtr.entrypoints=websecure
+      - traefik.http.routers.whoami-rtr.middlewares=chain-no-auth@file
+      - traefik.http.routers.whoami-rtr.service=whoami-svc
+      - traefik.http.services.whoami-svc.loadbalancer.server.port=2001
 networks:
   docker_network:
+    external: true
+  socket_proxy:
     external: true
