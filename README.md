@@ -1,7 +1,15 @@
 <!-- @format -->
 
 # I have updated the charts. I haven't updated the below guide yet. Basic changes are:
+July 5th
+1. We now use socket_proxy
+2. We've updated Dozzle, Homepage, Traefik and Watchtower to use the socket proxy.
+3. I've also updated dockge.yaml to usde the socket proxy too (You'll have to ssh in, enter the docker jail. You can find it within /opt/dockge/compose.yml. You can update the settings there, then down and up the dockge container for it to use the changes
+4. I've made a new socket_proxy network. Again, from the docker jail. You can do something like "docker network create   --driver=bridge   --subnet=192.168.91.0/24   socket_proxy" to create the network with the appropriate subnet.
+5. I've moved whoami to the traefik compose file, as its a traefik image. IMO it makes sense to have it in the yaml file. But I may be wrong...
+6. I can't get homepage to work non-root. So I've had to keep the homepage files as root only. Making sure the config dataset is also set to root/root in truenas.
 
+July 4th
 1. I made a new docker network called "docker_network". I did this in the Docker shell (SSH in to truenas. jlmkr shell docker, and then do docker network create docker_network)
 2. All compose files are now using this network, not the Traefik default network. This is to avoid startup dependencies. I'm not sure, but I have a hunch if dockge or traefik started up later, their default networks would not be available.
 3. Added middleware based on smarthomebeginner guides. Adjusted based on Dockge usage.
