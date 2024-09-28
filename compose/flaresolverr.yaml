@@ -2,15 +2,16 @@
 
 services:
   flaresolverr:
-    image: ghcr.io/flaresolverr/flaresolverr:latest
+    image: 21hsmw/flaresolverr:nodriver
+    restart: unless-stopped
     container_name: flaresolverr
     ports:
       - 8191:8191
     environment:
-      - LOG_LEVEL=info
+      - LOG_LEVEL=debug
       - TZ=Asia/Tokyo
-      - TEST_URL=https://www.google.com
-    restart: unless-stopped
+      - NAME_SERVERS=1.1.1.1
+      - LANG=en-US
     networks:
       - docker_network
     labels:
