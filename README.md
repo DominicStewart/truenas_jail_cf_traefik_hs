@@ -29,7 +29,7 @@ This guide will help you set up Docker containers on TrueNAS Scale using Jailmak
 - A domain managed by **Cloudflare**
 - Follow these YouTube videos:
   - [Setup Cloudflare tunnels and configure domains/subdomains](https://www.youtube.com/watch?v=yMmxw-DZ5Ec)
-  - [Setup TrueNAS Scale to run Jailmaker and Dockge](https://www.youtube.com/watch?v=yMmxw-DZ5Ec)
+  - [Setup TrueNAS Scale to run Jailmaker and Dockge](https://www.youtube.com/watch?v=S0nTRvAHAP8)
 
 ## Troubleshooting Tips
 
